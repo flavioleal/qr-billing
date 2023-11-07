@@ -3,6 +3,8 @@ using Microsoft.IdentityModel.Tokens;
 using QR.Billings.Api.Extensions;
 using QR.Billings.Api.Middleware;
 using QR.Billings.Business.Configuration;
+using QR.Billings.Business.ExternalServices;
+using QR.Billings.Business.Interfaces.ExternalServices;
 using QR.Billings.CrossCutting.IoC;
 using System.Text;
 
@@ -31,6 +33,9 @@ builder.Services.AddAuthentication(x =>
         ValidateAudience = false
     };
 });
+
+builder.Services.Configure<ApiExternalSettings>(builder.Configuration);
+builder.Services.AddHttpClient<IBillingExternalService, BillingExternalService>();
 
 builder.Services.RegisterServices();
 

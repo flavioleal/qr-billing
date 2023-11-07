@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using QR.Billings.Business.ExternalServices;
+using QR.Billings.Business.Interfaces.ExternalServices;
 using QR.Billings.Business.Interfaces.Notifier;
 using QR.Billings.Business.Interfaces.Repositories;
 using QR.Billings.Business.Interfaces.Services;
@@ -23,8 +25,6 @@ namespace QR.Billings.CrossCutting.IoC
             services.AddScoped<IUserRepository, UserRepository>();
             #endregion
 
-            #region external services
-            #endregion
         }
     }
 }

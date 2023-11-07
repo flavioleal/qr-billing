@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using QR.Billings.Business.IO.BillingExternal;
 
 namespace QR.Billings.Business.Interfaces.ExternalServices
 {
-    public  class IBillingExternalService
+    public  interface IBillingExternalService
     {
+        Task<BillingExternalCreateOutput?> Create(decimal value);
+        Task<BillingExternalCancelOutput?> Cancel(string idTransaction);
     }
 }
