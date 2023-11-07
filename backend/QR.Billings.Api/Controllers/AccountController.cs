@@ -21,7 +21,8 @@ namespace QR.Billings.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AuthenticateAsync([FromBody] UserInput input)
         {
-            throw new NotImplementedException();
+            var (user, token) = await _userService.AuthenticateAsync(input);
+            return Ok(new { user, token });
         }
     }
 }

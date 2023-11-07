@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QR.Billings.Business.Interfaces.ExternalServices
+namespace QR.Billings.Business.Enums
 {
-    public  class IBillingExternalService
+    public enum PaymentStatusEnum
     {
+        Pending,
+        Canceled,
+        Paid
     }
 }
