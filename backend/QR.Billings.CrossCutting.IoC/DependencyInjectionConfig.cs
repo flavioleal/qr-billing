@@ -19,6 +19,7 @@ namespace QR.Billings.CrossCutting.IoC
             services.AddScoped<INotifier, Notifier>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IBillingService, BillingService>();
             #endregion
 
             #region repositories
