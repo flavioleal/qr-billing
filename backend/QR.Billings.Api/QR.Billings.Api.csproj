@@ -14,4 +14,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\QR.Billings.Business\QR.Billings.Business.csproj" />
+    <ProjectReference Include="..\QR.Billings.CrossCutting.IoC\QR.Billings.CrossCutting.IoC.csproj" />
+    <ProjectReference Include="..\QR.Billings.Infra.Data\QR.Billings.Infra.Data.csproj" />
+  </ItemGroup>
+
 </Project>
