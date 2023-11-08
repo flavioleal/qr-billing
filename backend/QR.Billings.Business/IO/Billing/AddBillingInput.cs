@@ -19,8 +19,8 @@ namespace QR.Billings.Business.IO.Billing
         public AddBillingValidation()
         {
             RuleFor(f => f.Value)
-                .GreaterThan(0)
-                .WithMessage("O campo {PropertyName} precisa ser fornecido");
+                .NotEmpty()
+               .WithMessage("O campo {PropertyName} precisa ser fornecido");
         }
     }
 }

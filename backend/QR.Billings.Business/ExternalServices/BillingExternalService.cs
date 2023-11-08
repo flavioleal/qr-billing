@@ -34,6 +34,8 @@ namespace QR.Billings.Business.ExternalServices
 
             if (response.StatusCode == HttpStatusCode.BadRequest) return null;
 
+            response.EnsureSuccessStatusCode();
+
             return await DeserializeResponseContent<BillingExternalCancelOutput>(response);
         }
 
@@ -45,6 +47,8 @@ namespace QR.Billings.Business.ExternalServices
             var response = await _httpClient.PostAsync("/", jsonContent);
 
             if (response.StatusCode == HttpStatusCode.BadRequest) return null;
+
+            response.EnsureSuccessStatusCode();
 
             return await DeserializeResponseContent<BillingExternalCreateOutput>(response);
         }

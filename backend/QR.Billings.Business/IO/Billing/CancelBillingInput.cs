@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QR.Billings.Business.Enums
+namespace QR.Billings.Business.IO.Billing
 {
-    public enum PaymentStatusEnum
+    public class CancelBillingInput
     {
-        Pending = 1,
-        Canceled = 2,
-        Paid = 3
+        public Guid Id { get; set; }
     }
 }

@@ -24,6 +24,7 @@ namespace QR.Billings.CrossCutting.IoC
 
             #region repositories
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IBillingRepository, BillingRepository>();
             #endregion
 
         }

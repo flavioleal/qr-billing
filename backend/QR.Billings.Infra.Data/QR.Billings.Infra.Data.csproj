@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\QR.Billings.Business\QR.Billings.Business.csproj" />
   </ItemGroup>
 

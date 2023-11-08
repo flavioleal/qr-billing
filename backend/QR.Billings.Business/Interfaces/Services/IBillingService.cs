@@ -1,5 +1,6 @@
 ﻿using QR.Billings.Business.Entities;
 using QR.Billings.Business.IO.Billing;
+using QR.Billings.Business.IO.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,9 @@ namespace QR.Billings.Business.Interfaces.Services
     {
         Task<IEnumerable<Billing>> GetAll();
         Task<bool> AddAsync(AddBillingInput input);
-        Task CancelBillingByIdAsync(Guid id);
+        Task<bool> CancelBillingByIdAsync(Guid id);
+        Task<IEnumerable<Billing>> GetAllUnprocessedBilling();
+        Task UpdateAsync(Billing billing);
+        Task<Pagination<Billing>> GetPagedListByFilterAsync(BillingFilterInput filter);
     }
 }
