@@ -7,6 +7,7 @@ using QR.Billings.Business.Interfaces.Services;
 using QR.Billings.Business.Interfaces.Services.Base;
 using QR.Billings.Business.IO.Billing;
 using QR.Billings.Business.IO.Common;
+using System.Transactions;
 
 namespace QR.Billings.Business.Services
 {
@@ -22,7 +23,6 @@ namespace QR.Billings.Business.Services
 
         public async Task<bool> AddAsync(AddBillingInput input)
         {
-
             var billing = new Billing();
             billing.Value = input.Value;
             billing.Status = PaymentStatusEnum.Pending;
@@ -37,7 +37,7 @@ namespace QR.Billings.Business.Services
         public async Task<bool> CancelBillingByIdAsync(Guid id)
         {
             var billing = await _billingRepository.GetByIdAsync(id);
-            if(billing == null)
+            if (billing == null)
             {
                 Notify("Cobrança não encontrada!");
                 return false;
@@ -62,13 +62,13 @@ namespace QR.Billings.Business.Services
 
         public async Task<Pagination<Billing>> GetPagedListByFilterAsync(BillingFilterInput filter)
         {
-            var (list, totalRecords) =  await _billingRepository.GetPagedListByFilterAsync(filter);
+            var (list, totalRecords) = await _billingRepository.GetPagedListByFilterAsync(filter);
 
             return new Pagination<Billing>()
             {
                 List = list,
                 TotalRecords = totalRecords
-            }; 
+            };
         }
 
         public async Task UpdateAsync(Billing billing)
