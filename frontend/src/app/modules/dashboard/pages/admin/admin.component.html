@@ -2,9 +2,6 @@
   <div class="row">
     <div class="d-flex justify-content-between">
       <h3>Cobranças</h3>
-      <div class="d-flex align-items-center" *ngIf="roleUser == 'lojista'">
-        <button type="button" class="btn btn-primary btn-sm" routerLink="/billing/add">Adicionar</button>
-      </div>
     </div>
   </div>
 </div>
@@ -24,7 +21,7 @@
           <option value="3">Paga</option>
         </select>
       </div>
-      <div class="col-sm-4 mb-2" *ngIf="roleUser == 'admin'">
+      <div class="col-sm-4 mb-2" >
         <label for="nome" class="form-label">Lojista</label>
         <select class="form-select" aria-label="Default select example" formControlName="merchantId">
           <option value="" selected>Selecione</option>
@@ -50,19 +47,19 @@
         <thead>
           <tr>
 
-            <th scope="col" *ngIf="roleUser == 'admin'">Lojista</th>
+            <th scope="col" >Lojista</th>
             <th scope="col">Cliente</th>
             <th scope="col">Valor</th>
             <th scope="col">Data</th>
             <th scope="col">QR Code</th>
             <th scope="col">Status</th>
-            <th scope="col" *ngIf="roleUser == 'admin'"></th>
+            <th scope="col" ></th>
           </tr>
         </thead>
         <tbody>
           <ng-container *ngFor="let record of listBilling; let id = index">
             <tr>
-              <td *ngIf="roleUser == 'admin'">{{record.merchant.name}}</td>
+              <td >{{record.merchant.name}}</td>
               <td>{{record.customer.name}}</td>
               <td class="text-end">{{record.value | currency}}</td>
               <td>{{record.createdAt | date: 'dd/MM/yyyy hh:mm:ss'}}</td>
@@ -71,7 +68,7 @@
                     class="fa-solid fa-qrcode"></i></a>
               </td>
               <td>{{record.paymentDescription}}</td>
-              <td class="text-center" *ngIf="roleUser == 'admin'">
+              <td class="text-center" >
                 <button type="button" class="btn btn-danger btn-sm"
                 (click)="openModalConfirmation(record)"
                 *ngIf="roleUser == 'admin' && record.status == 1">Cancelar</button>

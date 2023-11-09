@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { DashboardService } from '../../dashboard.service';
-import { IListBillingOutput } from '../../interfaces/list-billing.interface';
-import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-import { IBillingFilter } from '../../interfaces/billing-filter.interface';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { AlertComponent } from 'ngx-bootstrap/alert';
-import { ICancelBilling } from '../../interfaces/cancel-billing.interface';
+import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { UserService } from 'src/app/core/services/user.service';
+import { DashboardService } from '../../dashboard.service';
+import { IBillingFilter } from '../../interfaces/billing-filter.interface';
+import { ICancelBilling } from '../../interfaces/cancel-billing.interface';
+import { IListBillingOutput } from '../../interfaces/list-billing.interface';
 
 @Component({
-  selector: 'app-billing-list',
-  templateUrl: './billing-list.component.html',
-  styleUrls: ['./billing-list.component.scss']
+  selector: 'app-admin',
+  templateUrl: './admin.component.html',
+  styleUrls: ['./admin.component.scss']
 })
-export class BillingListComponent implements OnInit {
+export class AdminComponent implements OnInit {
 
   page?: number = 1;
   totalRecords: number = 0;

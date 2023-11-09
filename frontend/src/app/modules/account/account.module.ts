@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { LoginComponent } from './components/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedQrModule } from 'src/app/shared/shared-qr.module';
+import { AlertModule } from 'ngx-bootstrap/alert';
 
 
 
@@ -14,7 +15,8 @@ import { SharedQrModule } from 'src/app/shared/shared-qr.module';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    SharedQrModule
+    SharedQrModule,
+    AlertModule.forRoot(),
   ]
 })
 export class AccountModule { }

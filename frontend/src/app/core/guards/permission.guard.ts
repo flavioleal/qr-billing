@@ -8,12 +8,17 @@ export const permissaoGuard = (activatedRouteSnapshot: ActivatedRouteSnapshot) =
   return validateGuardToken();
 
   function validateGuardToken() {
+    debugger;
     var role = activatedRouteSnapshot.data['role']
-    if(role){
+    if (role) {
       const user = tokenService.decryptToken();
+      if (role.indexOf(user.role) === -1) {
+        if (user.role == 'admin') {
+          router.navigate(['/admin']);
+        } else {
+          router.navigate(['']);
+        }
 
-      if(role.indexOf(user.role) === -1){
-        router.navigate(['/billing']);
         return false;
       }
     }

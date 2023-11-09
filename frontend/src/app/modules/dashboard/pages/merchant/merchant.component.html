@@ -1,0 +1,101 @@
+<div class="container-fluid mb-2">
+  <div class="row">
+    <div class="d-flex justify-content-between">
+      <h3>Cobranças</h3>
+      <div class="d-flex align-items-center">
+        <button type="button" class="btn btn-primary btn-sm" routerLink="/nova-cobranca">Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div>
+  <div *ngFor="let alert of alerts" class="mt-3 mb-3">
+    <alert [type]="alert.type" [dismissOnTimeout]="alert.timeout" (onClosed)="onClosedAlert(alert)">{{ alert.msg }}</alert>
+  </div>
+
+  <form [formGroup]="formResearch" >
+    <div class="row">
+      <div class="col-sm-4 mb-2">
+        <label for="nome" class="form-label">Status</label>
+        <select class="form-select" aria-label="Default select example" formControlName="status">
+          <option value="" selected>Selecione</option>
+          <option value="1">Pendente</option>
+          <option value="2">Cancelada</option>
+          <option value="3">Paga</option>
+        </select>
+      </div>
+    </div>
+    <div class="row mt-3 mb-3">
+      <div class="row col-12">
+        <div class="d-flex flex-row gap-2 justify-content-center">
+          <button type="button" class="btn btn-primary" (click)="research()">Pesquisar</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="container card" *ngIf="totalRecords > 0">
+  <div class="row card-body">
+    <div class="row">
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">Cliente</th>
+            <th scope="col">Valor</th>
+            <th scope="col">Data</th>
+            <th scope="col">QR Code</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let record of listBilling; let id = index">
+            <tr>
+              <td>{{record.customer.name}}</td>
+              <td class="text-end">{{record.value | currency}}</td>
+              <td>{{record.createdAt | date: 'dd/MM/yyyy hh:mm:ss'}}</td>
+              <td class="text-center" width="10%">
+                <a *ngIf="record.qrCode" class="p-2" (click)="openModalQrCode(record)"><i
+                    class="fa-solid fa-qrcode"></i></a>
+              </td>
+              <td>{{record.paymentDescription}}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+
+      <div class="row text-center">
+        <div class="d-flex flex-row justify-content-center">
+          <pagination [boundaryLinks]="true" [totalItems]="totalRecords" previousText="&lsaquo;" nextText="&rsaquo;"
+            firstText="&laquo;" lastText="&raquo;" (pageChanged)="pageChanged($event)">
+          </pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+  [class.show]="isModalQrCodeOpen" [style.display]="isModalQrCodeOpen ? 'block' : 'none'"
+  [class.modal-static-backdrop]="isModalQrCodeOpen">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">{{dataModalQrCode?.customer?.name}}</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+          (click)="closeModalQrCode()"></button>
+      </div>
+      <div class="modal-body text-center">
+          <qrcode [qrdata]="qrCode" [allowEmptyString]="true" [cssClass]="'center'" [colorDark]="'#000000ff'"
+            [colorLight]="'#ffffffff'" [elementType]="'canvas'" [errorCorrectionLevel]="'M'" [imageHeight]="75"
+            [imageWidth]="75" [margin]="4" [scale]="1" [width]="300"></qrcode>
+
+            <h3 class="mt-1">Valor: {{dataModalQrCode?.value | currency}}</h3>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+          (click)="closeModalQrCode()">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
