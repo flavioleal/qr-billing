@@ -2,13 +2,8 @@
 using Microsoft.Extensions.Hosting;
 using QR.Billings.Business.Interfaces.ExternalServices;
 using QR.Billings.Business.Interfaces.Services;
-using QR.Billings.Business.IO.Billing;
+using QR.Billings.Business.IO.BillingExternal;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QR.Billings.Business.Services.Worker
 {
@@ -41,7 +36,7 @@ namespace QR.Billings.Business.Services.Worker
 
         private async Task CheckAndGenerateUnprocessedBillings(CancellationToken cancellationToken, IBillingService billingService, IBillingExternalService billingExternalService)
         {
-            var billingCreateExternalServiceLog = new BillingCreateExternalServiceLogOutput();
+            var billingCreateExternalServiceLog = new BillingExternalServiceCreateLogOutput();
             try
             {
                 var unprocessedBilling = await billingService.GetAllUnprocessedBilling(cancellationToken);
@@ -74,7 +69,7 @@ namespace QR.Billings.Business.Services.Worker
 
         private async Task CheckAndCancelBillingsWithUncanceledTransactions(CancellationToken cancellationToken, IBillingService billingService, IBillingExternalService billingExternalService)
         {
-            var billingCancelExternalServiceLog = new BillingCancelExternalServiceLogOutput();
+            var billingCancelExternalServiceLog = new BillingExternalServiceCancelLogOutput();
             try
             {
                 var canceleds = await billingService.GetCancelledBillingsWithUncanceledTransactions(cancellationToken);
