@@ -44,6 +44,11 @@ namespace QR.Billings.Business.Services
                 Notify("Cobrança não encontrada!");
                 return false;
             }
+            if(_currentUser.Id == null)
+            {
+                Notify("Ususário não está logado!");
+                return false;
+            }
 
             billing.Cancel(_currentUser.Id.Value);
 

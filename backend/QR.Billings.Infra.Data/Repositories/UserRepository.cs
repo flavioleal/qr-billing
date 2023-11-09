@@ -5,7 +5,7 @@ namespace QR.Billings.Infra.Data.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public async Task<User?> GetAsync(string username, string password)
+        public async Task<User> GetAsync(string username, string password)
         {
             var users = new List<User>();
             users.Add(new User { Id = Guid.Parse("e4ae8020-92a3-4d26-8c41-2aaaa3604f0d"), Username = "admin", Password = "admin", Role = "admin" });

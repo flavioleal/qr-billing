@@ -12,7 +12,7 @@ namespace QR.Billings.Business.IO.Billing
     {
         public Guid Id { get; set; }
         public decimal Value { get; set; }
-        public string? QrCode { get; set; }
+        public string QrCode { get; set; }
         public DateTime CreatedAt { get; set; }
         public PaymentStatusEnum Status { get; set; }
         public string PaymentDescription { get; set; }

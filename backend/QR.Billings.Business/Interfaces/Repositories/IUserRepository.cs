@@ -9,6 +9,6 @@ namespace QR.Billings.Business.Interfaces.Repositories
 {
     public interface IUserRepository
     {
-        Task<User?> GetAsync(string username, string password);
+        Task<User> GetAsync(string username, string password);
     }
 }

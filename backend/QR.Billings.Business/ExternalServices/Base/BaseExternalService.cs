@@ -15,7 +15,7 @@ namespace QR.Billings.Business.ExternalServices.Base
             return new StringContent(json, Encoding.UTF8, contentType);
         }
 
-        public async Task<T?> DeserializeResponseContent<T>(HttpResponseMessage response)
+        public async Task<T> DeserializeResponseContent<T>(HttpResponseMessage response)
         {
             var options = new JsonSerializerOptions
             {

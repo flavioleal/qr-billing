@@ -18,7 +18,7 @@ namespace QR.Billings.Business.Services
             _tokenService = tokenService;
         }
 
-        public async Task<(User?, string)> AuthenticateAsync(LoginInput input)
+        public async Task<(User, string)> AuthenticateAsync(LoginInput input)
         {
             var user = await _userRepository.GetAsync(input.Username, input.Password);
             if(user == null)

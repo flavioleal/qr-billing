@@ -10,6 +10,6 @@ namespace QR.Billings.Business.Interfaces.Services
 {
     public interface IUserService
     {
-        Task<(User?, string)> AuthenticateAsync(LoginInput input);
+        Task<(User, string)> AuthenticateAsync(LoginInput input);
     }
 }
