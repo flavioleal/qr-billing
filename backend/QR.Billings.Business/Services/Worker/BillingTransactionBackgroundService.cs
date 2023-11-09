@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QR.Billings.Business.Services
+namespace QR.Billings.Business.Services.Worker
 {
     public class BillingTransactionBackgroundService : BackgroundService
     {
@@ -63,7 +63,7 @@ namespace QR.Billings.Business.Services
                     Log.Information($"[Create billing external] - Success  {{@billingCreateExternalServiceLog}}", billingCreateExternalServiceLog);
                 }
 
-               
+
             }
             catch (Exception ex)
             {

@@ -1,8 +1,5 @@
-﻿using QR.Billings.Business.BusinessObjects;
-using QR.Billings.Business.Entities;
-using QR.Billings.Business.Enums;
+﻿using QR.Billings.Business.Entities;
 using QR.Billings.Business.Interfaces.CurrentUser;
-using QR.Billings.Business.Interfaces.ExternalServices;
 using QR.Billings.Business.Interfaces.Notifier;
 using QR.Billings.Business.Interfaces.Repositories;
 using QR.Billings.Business.Interfaces.Services;
@@ -10,7 +7,7 @@ using QR.Billings.Business.Interfaces.Services.Base;
 using QR.Billings.Business.IO.Billing;
 using QR.Billings.Business.IO.Common;
 using QR.Billings.Business.Utils;
-using static System.Net.Mime.MediaTypeNames;
+using Serilog;
 
 namespace QR.Billings.Business.Services
 {
@@ -59,9 +56,19 @@ namespace QR.Billings.Business.Services
             var billing = new Billing(input.Value);
             billing.PrepareDataForAddition(input, _currentUser);
 
-            await _billingRepository.AddAsync(billing);
+            var addBillingLog = new AddBillingLogOutput(billing.Id, billing.Value, billing.Merchant.Id, billing.Merchant.Name);
+            try
+            {
+                await _billingRepository.AddAsync(billing);
 
-            return true;
+                Log.Information($"[Add billing] - Success {{@addBillingLog}}", addBillingLog);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Add billing] - Error {{@addBillingLog}}", addBillingLog, ex);
+                throw;
+            }
         }
 
         public async Task<bool> CancelBillingByIdAsync(Guid id)
@@ -80,9 +87,20 @@ namespace QR.Billings.Business.Services
 
             billing.Cancel(_currentUser.Id.Value);
 
-            await _billingRepository.UpdateAsync(billing);
+            var cancelBillingLog = new CancelBillingLogOutput(billing.Id, billing.Value, _currentUser.Id, _currentUser.Name);
 
-            return true;
+            try
+            {
+                await UpdateAsync(billing);
+
+                Log.Information($"[Cancel billing] - Success {{@cancelBillingLog}}", cancelBillingLog);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Cancel billing] - Error {{@cancelBillingLog}}", cancelBillingLog, ex);
+                throw;
+            }
         }
 
         public async Task UpdateAsync(Billing billing)
