@@ -62,14 +62,14 @@ namespace QR.Billings.Business.Services
             return await _billingRepository.GetAll();
         }
 
-        public async Task<IEnumerable<Billing>> GetAllUnprocessedBilling()
+        public async Task<IEnumerable<Billing>> GetAllUnprocessedBilling(CancellationToken cancellationToken)
         {
-            return await _billingRepository.GetAllUnprocessedBilling();
+            return await _billingRepository.GetAllUnprocessedBilling(cancellationToken);
         }
 
-        public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions()
+        public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions(CancellationToken cancellationToken)
         {
-            return await _billingRepository.GetCancelledBillingsWithUncanceledTransactions();
+            return await _billingRepository.GetCancelledBillingsWithUncanceledTransactions(cancellationToken);
         }
 
         public async Task<Pagination<ListBillingOutput>> GetPagedListByFilterAsync(BillingFilterInput filter)

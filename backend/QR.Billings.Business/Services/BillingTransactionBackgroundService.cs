@@ -21,53 +21,47 @@ namespace QR.Billings.Business.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                await CheckAndGenerateUnprocessedBillings();
-                await CheckAndCancelBillingsWithUncanceledTransactions();
-                await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
-            }
-        }
-
-        private async Task CheckAndGenerateUnprocessedBillings()
-        {
             using (var scope = _serviceProvider.CreateScope())
             {
                 var billingService = scope.ServiceProvider.GetRequiredService<IBillingService>();
                 var billingExternalService = scope.ServiceProvider.GetRequiredService<IBillingExternalService>();
 
-                var unprocessedBilling = await billingService.GetAllUnprocessedBilling();
-
-                foreach (var billing in unprocessedBilling)
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    var transaction = await billingExternalService.Create(billing.Value);
-                    if (transaction != null)
-                    {
-                        billing.TransactionId = transaction.Id;
-                        billing.QrCode = transaction.QrCode;
-                        await billingService.UpdateAsync(billing);
-                    }
+                    await CheckAndGenerateUnprocessedBillings(stoppingToken, billingService, billingExternalService);
+                    await CheckAndCancelBillingsWithUncanceledTransactions(stoppingToken, billingService, billingExternalService);
+                    await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
                 }
             }
         }
 
-        private async Task CheckAndCancelBillingsWithUncanceledTransactions()
+        private async Task CheckAndGenerateUnprocessedBillings(CancellationToken cancellationToken, IBillingService billingService, IBillingExternalService billingExternalService)
         {
-            using (var scope = _serviceProvider.CreateScope())
+            var unprocessedBilling = await billingService.GetAllUnprocessedBilling(cancellationToken);
+
+            foreach (var billing in unprocessedBilling)
             {
-                var billingService = scope.ServiceProvider.GetRequiredService<IBillingService>();
-                var billingExternalService = scope.ServiceProvider.GetRequiredService<IBillingExternalService>();
-
-                var canceleds = await billingService.GetCancelledBillingsWithUncanceledTransactions();
-
-                foreach (var billing in canceleds)
+                var transaction = await billingExternalService.Create(billing.Value);
+                if (transaction != null)
                 {
-                    var transaction = await billingExternalService.Cancel(billing.TransactionId);
-                    if (transaction != null)
-                    {
-                        billing.TransactionCanceled = true;
-                        await billingService.UpdateAsync(billing);
-                    }
+                    billing.TransactionId = transaction.Id;
+                    billing.QrCode = transaction.QrCode;
+                    await billingService.UpdateAsync(billing);
+                }
+            }
+        }
+
+        private async Task CheckAndCancelBillingsWithUncanceledTransactions(CancellationToken cancellationToken, IBillingService billingService, IBillingExternalService billingExternalService)
+        {
+            var canceleds = await billingService.GetCancelledBillingsWithUncanceledTransactions(cancellationToken);
+
+            foreach (var billing in canceleds)
+            {
+                var transaction = await billingExternalService.Cancel(billing.TransactionId);
+                if (transaction != null)
+                {
+                    billing.TransactionCanceled = true;
+                    await billingService.UpdateAsync(billing);
                 }
             }
         }

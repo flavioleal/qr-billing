@@ -26,9 +26,9 @@ namespace QR.Billings.Infra.Data.Repositories
             return await _collection.Find(_ => true).ToListAsync();
         }
 
-        public async Task<IEnumerable<Billing>> GetAllUnprocessedBilling()
+        public async Task<IEnumerable<Billing>> GetAllUnprocessedBilling(CancellationToken cancellationToken)
         {
-            return await _collection.Find(x => x.TransactionId == null).ToListAsync();
+            return await _collection.Find(x => x.TransactionId == null).ToListAsync(cancellationToken);
         }
 
         public async Task<Billing> GetByIdAsync(Guid id)
@@ -69,12 +69,12 @@ namespace QR.Billings.Infra.Data.Repositories
             return (list, totalRecords);
         }
 
-        public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions()
+        public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions(CancellationToken cancellationToken)
         {
             return await _collection.Find(x => 
                                 x.Status == PaymentStatusEnum.Canceled &&
                                x.TransactionId != null &&
-                                (x.TransactionCanceled == null || x.TransactionCanceled == false) ).ToListAsync();
+                                (x.TransactionCanceled == null || x.TransactionCanceled == false) ).ToListAsync(cancellationToken);
         }
     }
 }
