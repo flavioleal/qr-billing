@@ -16,31 +16,6 @@ namespace QR.Billings.Infra.Data.Repositories
             _collection = database.GetCollection<Billing>("billing");
         }
 
-        public async Task AddAsync(Billing entity)
-        {
-            await _collection.InsertOneAsync(entity);
-        }
-
-        public async Task<IEnumerable<Billing>> GetAll()
-        {
-            return await _collection.Find(_ => true).ToListAsync();
-        }
-
-        public async Task<IEnumerable<Billing>> GetAllUnprocessedBilling(CancellationToken cancellationToken)
-        {
-            return await _collection.Find(x => x.TransactionId == null).ToListAsync(cancellationToken);
-        }
-
-        public async Task<Billing> GetByIdAsync(Guid id)
-        {
-            return await _collection.Find(x => x.Id == id).SingleOrDefaultAsync();
-        }
-
-        public async Task UpdateAsync(Billing entity)
-        {
-            await _collection.ReplaceOneAsync(x => x.Id == entity.Id, entity);
-        }
-
         public async Task<(IEnumerable<Billing> List, long TotalRecords)> GetPagedListByFilterAsync(BillingFilterInput filter)
         {
             var filterDefinition = Builders<Billing>.Filter.Empty;
@@ -67,6 +42,25 @@ namespace QR.Billings.Infra.Data.Repositories
                                   .ToListAsync();
 
             return (list, totalRecords);
+        }
+
+        public async Task<Billing> GetByIdAsync(Guid id)
+        {
+            return await _collection.Find(x => x.Id == id).SingleOrDefaultAsync();
+        }
+
+        public async Task AddAsync(Billing entity)
+        {
+            await _collection.InsertOneAsync(entity);
+        }
+        public async Task UpdateAsync(Billing entity)
+        {
+            await _collection.ReplaceOneAsync(x => x.Id == entity.Id, entity);
+        }
+
+        public async Task<IEnumerable<Billing>> GetAllUnprocessedBilling(CancellationToken cancellationToken)
+        {
+            return await _collection.Find(x => x.TransactionId == null).ToListAsync(cancellationToken);
         }
 
         public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions(CancellationToken cancellationToken)

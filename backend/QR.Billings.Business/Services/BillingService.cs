@@ -24,54 +24,6 @@ namespace QR.Billings.Business.Services
             _currentUser = currentUser;
         }
 
-        public async Task<bool> AddAsync(AddBillingInput input)
-        {
-            if (!ExecuteValidation(new AddBillingValidation(), input)) return false;
-
-            var billing = new Billing(input.Value);
-            billing.PrepareDataForAddition(input, _currentUser);
-
-            await _billingRepository.AddAsync(billing);
-
-            return true;
-        }
-
-        public async Task<bool> CancelBillingByIdAsync(Guid id)
-        {
-            var billing = await _billingRepository.GetByIdAsync(id);
-            if (billing == null)
-            {
-                Notify("Cobrança não encontrada!");
-                return false;
-            }
-            if(_currentUser.Id == null)
-            {
-                Notify("Ususário não está logado!");
-                return false;
-            }
-
-            billing.Cancel(_currentUser.Id.Value);
-
-            await _billingRepository.UpdateAsync(billing);
-
-            return true;
-        }
-
-        public async Task<IEnumerable<Billing>> GetAll()
-        {
-            return await _billingRepository.GetAll();
-        }
-
-        public async Task<IEnumerable<Billing>> GetAllUnprocessedBilling(CancellationToken cancellationToken)
-        {
-            return await _billingRepository.GetAllUnprocessedBilling(cancellationToken);
-        }
-
-        public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions(CancellationToken cancellationToken)
-        {
-            return await _billingRepository.GetCancelledBillingsWithUncanceledTransactions(cancellationToken);
-        }
-
         public async Task<Pagination<ListBillingOutput>> GetPagedListByFilterAsync(BillingFilterInput filter)
         {
             if (_currentUser.Role == "lojista")
@@ -100,9 +52,52 @@ namespace QR.Billings.Business.Services
             };
         }
 
+        public async Task<bool> AddAsync(AddBillingInput input)
+        {
+            if (!ExecuteValidation(new AddBillingValidation(), input)) return false;
+
+            var billing = new Billing(input.Value);
+            billing.PrepareDataForAddition(input, _currentUser);
+
+            await _billingRepository.AddAsync(billing);
+
+            return true;
+        }
+
+        public async Task<bool> CancelBillingByIdAsync(Guid id)
+        {
+            var billing = await _billingRepository.GetByIdAsync(id);
+            if (billing == null)
+            {
+                Notify("Cobrança não encontrada!");
+                return false;
+            }
+            if (_currentUser.Id == null)
+            {
+                Notify("Ususário não está logado!");
+                return false;
+            }
+
+            billing.Cancel(_currentUser.Id.Value);
+
+            await _billingRepository.UpdateAsync(billing);
+
+            return true;
+        }
+
         public async Task UpdateAsync(Billing billing)
         {
             await _billingRepository.UpdateAsync(billing);
+        }
+
+        public async Task<IEnumerable<Billing>> GetAllUnprocessedBilling(CancellationToken cancellationToken)
+        {
+            return await _billingRepository.GetAllUnprocessedBilling(cancellationToken);
+        }
+
+        public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions(CancellationToken cancellationToken)
+        {
+            return await _billingRepository.GetCancelledBillingsWithUncanceledTransactions(cancellationToken);
         }
     }
 }

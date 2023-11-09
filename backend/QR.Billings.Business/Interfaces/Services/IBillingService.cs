@@ -11,7 +11,6 @@ namespace QR.Billings.Business.Interfaces.Services
 {
     public interface IBillingService
     {
-        Task<IEnumerable<Billing>> GetAll();
         Task<bool> AddAsync(AddBillingInput input);
         Task<bool> CancelBillingByIdAsync(Guid id);
         Task UpdateAsync(Billing billing);

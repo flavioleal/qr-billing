@@ -6,7 +6,6 @@ namespace QR.Billings.Business.Interfaces.Repositories
     public interface IBillingRepository
     {
         Task<(IEnumerable<Billing> List, long TotalRecords)> GetPagedListByFilterAsync(BillingFilterInput filter);
-        public Task<IEnumerable<Billing>> GetAll();
         Task AddAsync(Billing entity);
         Task UpdateAsync(Billing entity);
         Task<Billing> GetByIdAsync(Guid id);
