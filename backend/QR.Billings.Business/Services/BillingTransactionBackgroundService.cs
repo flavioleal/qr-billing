@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Hosting;
 using QR.Billings.Business.Interfaces.ExternalServices;
 using QR.Billings.Business.Interfaces.Services;
+using QR.Billings.Business.IO.Billing;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,8 @@ namespace QR.Billings.Business.Services
                 var billingService = scope.ServiceProvider.GetRequiredService<IBillingService>();
                 var billingExternalService = scope.ServiceProvider.GetRequiredService<IBillingExternalService>();
 
+                Log.Information("Worker insider API running running at: {time}", DateTimeOffset.Now);
+
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     await CheckAndGenerateUnprocessedBillings(stoppingToken, billingService, billingExternalService);
@@ -37,32 +41,64 @@ namespace QR.Billings.Business.Services
 
         private async Task CheckAndGenerateUnprocessedBillings(CancellationToken cancellationToken, IBillingService billingService, IBillingExternalService billingExternalService)
         {
-            var unprocessedBilling = await billingService.GetAllUnprocessedBilling(cancellationToken);
-
-            foreach (var billing in unprocessedBilling)
+            var billingCreateExternalServiceLog = new BillingCreateExternalServiceLogOutput();
+            try
             {
-                var transaction = await billingExternalService.Create(billing.Value);
-                if (transaction != null)
+                var unprocessedBilling = await billingService.GetAllUnprocessedBilling(cancellationToken);
+
+                if (unprocessedBilling != null && unprocessedBilling.Count() > 0)
                 {
-                    billing.TransactionId = transaction.Id;
-                    billing.QrCode = transaction.QrCode;
-                    await billingService.UpdateAsync(billing);
+                    billingCreateExternalServiceLog.Total = unprocessedBilling.Count();
+                    foreach (var billing in unprocessedBilling)
+                    {
+                        var transaction = await billingExternalService.Create(billing.Value);
+                        if (transaction != null)
+                        {
+                            billing.TransactionId = transaction.Id;
+                            billing.QrCode = transaction.QrCode;
+                            await billingService.UpdateAsync(billing);
+                            billingCreateExternalServiceLog.TotalProcessed++;
+                        }
+                    }
+                    Log.Information($"[Create billing external] - Success  {{@billingCreateExternalServiceLog}}", billingCreateExternalServiceLog);
                 }
+
+               
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Create billing external] - Error {{@billingCreateExternalServiceLog}}", billingCreateExternalServiceLog, ex);
+                throw;
             }
         }
 
         private async Task CheckAndCancelBillingsWithUncanceledTransactions(CancellationToken cancellationToken, IBillingService billingService, IBillingExternalService billingExternalService)
         {
-            var canceleds = await billingService.GetCancelledBillingsWithUncanceledTransactions(cancellationToken);
-
-            foreach (var billing in canceleds)
+            var billingCancelExternalServiceLog = new BillingCancelExternalServiceLogOutput();
+            try
             {
-                var transaction = await billingExternalService.Cancel(billing.TransactionId);
-                if (transaction != null)
+                var canceleds = await billingService.GetCancelledBillingsWithUncanceledTransactions(cancellationToken);
+
+                if (canceleds != null && canceleds.Count() > 0)
                 {
-                    billing.TransactionCanceled = true;
-                    await billingService.UpdateAsync(billing);
+                    billingCancelExternalServiceLog.Total = canceleds.Count();
+                    foreach (var billing in canceleds)
+                    {
+                        var transaction = await billingExternalService.Cancel(billing.TransactionId);
+                        if (transaction != null)
+                        {
+                            billing.TransactionCanceled = true;
+                            await billingService.UpdateAsync(billing);
+                            billingCancelExternalServiceLog.TotalProcessed++;
+                        }
+                    }
+                    Log.Information($"[Cancel billing external] - Success  {{@billingCancelExternalServiceLog}}", billingCancelExternalServiceLog);
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Cancel billing external] - Error {{@billingCancelExternalServiceLog}}", billingCancelExternalServiceLog, ex);
+                throw;
             }
         }
     }
