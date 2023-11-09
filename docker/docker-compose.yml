@@ -13,4 +13,14 @@ services:
       - ~/docker:/data/db
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js
     command: ["--auth", "--bind_ip_all"]
-     
+
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: Y
+    ports:
+      - "5341:80"
+    volumes:
+      - ./seq-dev:/data 
