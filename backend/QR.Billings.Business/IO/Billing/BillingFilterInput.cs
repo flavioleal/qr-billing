@@ -11,5 +11,6 @@ namespace QR.Billings.Business.IO.Billing
     public class BillingFilterInput : PaginationFilterInput
     {
         public PaymentStatusEnum?  Status { get; set; }
+        public Guid? MerchantId { get; set; }
     }
 }

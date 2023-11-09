@@ -2,7 +2,7 @@
   <div class="row">
     <div class="d-flex justify-content-between">
       <h3>Cobranças</h3>
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center" *ngIf="roleUser == 'lojista'">
         <button type="button" class="btn btn-primary btn-sm" routerLink="/billing/add">Adicionar</button>
       </div>
     </div>
@@ -24,6 +24,15 @@
           <option value="3">Paga</option>
         </select>
       </div>
+      <div class="col-sm-4 mb-2" *ngIf="roleUser == 'admin'">
+        <label for="nome" class="form-label">Lojista</label>
+        <select class="form-select" aria-label="Default select example" formControlName="merchantId">
+          <option value="" selected>Selecione</option>
+          <option value="c2a04e21-961f-4f60-b339-9fe2596c0c62">Lojista 1</option>
+          <option value="8f8e562c-ba10-45b7-8972-c0a6550ea45f">Lojista 2</option>
+          <option value="52434933-3e23-48cb-a87e-51740a899d3a">Lojista 3</option>
+        </select>
+      </div>
     </div>
     <div class="row mt-3 mb-3">
       <div class="row col-12">
@@ -41,6 +50,7 @@
         <thead>
           <tr>
 
+            <th scope="col" *ngIf="roleUser == 'admin'">Lojista</th>
             <th scope="col">Cliente</th>
             <th scope="col">Valor</th>
             <th scope="col">Data</th>
@@ -52,6 +62,7 @@
         <tbody>
           <ng-container *ngFor="let record of listBilling; let id = index">
             <tr>
+              <td *ngIf="roleUser == 'admin'">{{record.merchant.name}}</td>
               <td>{{record.customer.name}}</td>
               <td class="text-end">{{record.value | currency}}</td>
               <td>{{record.createdAt | date: 'dd/MM/yyyy hh:mm:ss'}}</td>

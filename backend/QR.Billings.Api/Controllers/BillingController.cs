@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QR.Billings.Api.Controllers.Base;
 using QR.Billings.Business.Interfaces.Notifier;
@@ -39,6 +40,7 @@ namespace QR.Billings.Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "lojista")]
         public async Task<IActionResult> Post([FromBody] AddBillingInput input)
         {
             var result = await _billingService.AddAsync(input);
@@ -48,7 +50,7 @@ namespace QR.Billings.Api.Controllers
 
         // PUT api/<BillingController>/5
         [HttpPut("cancel/{id}")]
-        //[Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CancelBillingByIdAsync(Guid id, [FromBody] CancelBillingInput input)

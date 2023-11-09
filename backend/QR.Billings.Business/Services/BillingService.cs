@@ -10,6 +10,7 @@ using QR.Billings.Business.Interfaces.Services.Base;
 using QR.Billings.Business.IO.Billing;
 using QR.Billings.Business.IO.Common;
 using QR.Billings.Business.Utils;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace QR.Billings.Business.Services
 {
@@ -68,6 +69,11 @@ namespace QR.Billings.Business.Services
 
         public async Task<Pagination<ListBillingOutput>> GetPagedListByFilterAsync(BillingFilterInput filter)
         {
+            if (_currentUser.Role == "lojista")
+            {
+                filter.MerchantId = _currentUser.Id;
+            }
+
             var (list, totalRecords) = await _billingRepository.GetPagedListByFilterAsync(filter);
 
             var projectedList = list.Select(x => new ListBillingOutput
@@ -78,8 +84,8 @@ namespace QR.Billings.Business.Services
                 CreatedAt = x.CreatedAt,
                 Status = x.Status,
                 PaymentDescription = EnumUtils.GetDescriptionFromEnumValue(x.Status),
-                Customer = new Customer(x.Customer.Id, x.Customer.Name, x.Customer.Email)
-
+                Customer = new Customer(x.Customer.Id, x.Customer.Name, x.Customer.Email),
+                Merchant = new Merchant(x.Merchant.Id, x.Merchant.Name)
             });
 
             return new Pagination<ListBillingOutput>()

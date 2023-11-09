@@ -35,7 +35,8 @@ export class BillingListComponent implements OnInit {
     private dashboardService: DashboardService,
     private userService: UserService) {
     this.formResearch = this.fb.group({
-      status: [""]
+      status: [''],
+      merchantId: ['']
     });
 
     this.userService.$user.subscribe({
@@ -52,10 +53,11 @@ export class BillingListComponent implements OnInit {
   }
 
   research() {
-    const { status } = this.formResearch.value;
+    const { status, merchantId } = this.formResearch.value;
     const filter: IBillingFilter = {
       page: this.page,
-      status: status
+      status: status,
+      merchantId: merchantId
     }
     this.dashboardService.getByFilter(filter).subscribe({
       next: (resp) => {
@@ -69,8 +71,6 @@ export class BillingListComponent implements OnInit {
         }
       },
       error: (ex) => {
-        console.log(ex);
-        console.log();
         this.totalRecords = 0;
         this.listBilling = [];
         if (ex.status == 400) {

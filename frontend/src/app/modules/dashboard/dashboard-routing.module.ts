@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { BillingFormComponent } from './components/billing-form/billing-form.component';
 import { BillingListComponent } from './components/billing-list/billing-list.component';
 import { DashboardComponent } from './dashboard.component';
+import { permissaoGuard } from 'src/app/core/guards/permission.guard';
 
 const routes: Routes = [
   {
@@ -18,7 +19,11 @@ const routes: Routes = [
       },
       {
         path: 'add',
-        component: BillingFormComponent
+        component: BillingFormComponent,
+        canActivate: [permissaoGuard],
+        data: {
+          role: 'lojista'
+        }
       },
     ]
   }

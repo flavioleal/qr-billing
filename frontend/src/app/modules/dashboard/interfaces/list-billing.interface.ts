@@ -7,12 +7,17 @@ export enum PaymentStatusEnum {
 export interface ICustomerOutput {
   name: string;
 }
+
+export interface IMerchantOutput {
+  name: string;
+}
 export interface IListBillingOutput {
   id: string;
   value: number;
   qrCode: string;
   createdAt: Date;
   status: PaymentStatusEnum;
-  customer: ICustomerOutput
+  customer: ICustomerOutput;
+  merchant: IMerchantOutput;
   paymentDescription: string;
 }

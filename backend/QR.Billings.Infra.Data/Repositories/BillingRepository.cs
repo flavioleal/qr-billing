@@ -50,6 +50,11 @@ namespace QR.Billings.Infra.Data.Repositories
                 filterDefinition &= Builders<Billing>.Filter.Eq(b => b.Status, filter.Status);
             }
 
+            if (filter.MerchantId.HasValue)
+            {
+                filterDefinition &= Builders<Billing>.Filter.Eq(b => b.Merchant.Id, filter.MerchantId.Value);
+            }
+
             var query = _collection.Find(filterDefinition);
 
             long totalRecords = await query.CountDocumentsAsync();
