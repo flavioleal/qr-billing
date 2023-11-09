@@ -60,7 +60,7 @@
                     class="fa-solid fa-qrcode"></i></a>
               </td>
               <td>{{record.paymentDescription}}</td>
-              <td class="text-center">
+              <td class="text-center" *ngIf="roleUser == 'admin'">
                 <button type="button" class="btn btn-danger btn-sm"
                 (click)="openModalConfirmation(record)"
                 *ngIf="roleUser == 'admin' && record.status == 1">Cancelar</button>

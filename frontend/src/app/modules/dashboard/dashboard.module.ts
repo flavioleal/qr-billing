@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
@@ -13,6 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedQrModule } from 'src/app/shared/shared-qr.module';
 import { CURRENCY_MASK_CONFIG, CurrencyMaskConfig, CurrencyMaskModule } from 'ng2-currency-mask';
 import { AlertModule } from 'ngx-bootstrap/alert';
+import { RequestInterceptor } from 'src/app/core/interceptors/request.interceptor';
 
 export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
   align: "right",
@@ -44,7 +45,12 @@ export const CustomCurrencyMaskConfig: CurrencyMaskConfig = {
     AlertModule.forRoot(),
   ],
   providers: [
-    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig }
+    { provide: CURRENCY_MASK_CONFIG, useValue: CustomCurrencyMaskConfig },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RequestInterceptor,
+      multi: true,
+    },
   ]
 })
 export class DashboardModule { }

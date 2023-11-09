@@ -11,5 +11,6 @@ namespace QR.Billings.Business.Interfaces.Repositories
         Task UpdateAsync(Billing entity);
         Task<Billing> GetByIdAsync(Guid id);
         Task<IEnumerable<Billing>> GetAllUnprocessedBilling();
+        Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions();
     }
 }

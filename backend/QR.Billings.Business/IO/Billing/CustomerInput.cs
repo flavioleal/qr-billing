@@ -8,7 +8,6 @@ namespace QR.Billings.Business.IO.Billing
 {
     public class CustomerInput
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
+   
     }
 }

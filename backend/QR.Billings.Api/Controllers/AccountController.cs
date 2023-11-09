@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QR.Billings.Business.Interfaces.Services;
-using QR.Billings.Business.IO.User;
+using QR.Billings.Business.IO.Login;
 
 namespace QR.Billings.Api.Controllers
 {
@@ -19,7 +19,7 @@ namespace QR.Billings.Api.Controllers
         [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AuthenticateAsync([FromBody] UserInput input)
+        public async Task<IActionResult> AuthenticateAsync([FromBody] LoginInput input)
         {
             var (user, token) = await _userService.AuthenticateAsync(input);
             return Ok(new { user, token });

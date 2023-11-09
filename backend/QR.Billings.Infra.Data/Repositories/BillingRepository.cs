@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using QR.Billings.Business.Entities;
+using QR.Billings.Business.Enums;
 using QR.Billings.Business.Interfaces.Repositories;
 using QR.Billings.Business.IO.Billing;
 using SharpCompress.Common;
@@ -53,12 +54,22 @@ namespace QR.Billings.Infra.Data.Repositories
 
             long totalRecords = await query.CountDocumentsAsync();
 
+            query = query.SortByDescending(b => b.CreatedAt);
+
             var list = await query
                                   .Skip(filter.Skip)
                                   .Limit(filter.PageSize)
                                   .ToListAsync();
 
             return (list, totalRecords);
+        }
+
+        public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions()
+        {
+            return await _collection.Find(x => 
+                                x.Status == PaymentStatusEnum.Canceled &&
+                               x.TransactionId != null &&
+                                (x.TransactionCanceled == null || x.TransactionCanceled == false) ).ToListAsync();
         }
     }
 }

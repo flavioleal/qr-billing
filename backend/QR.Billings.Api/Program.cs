@@ -8,12 +8,21 @@ using QR.Billings.Api.Middleware;
 using QR.Billings.Business.Configuration;
 using QR.Billings.Business.ExternalServices;
 using QR.Billings.Business.Interfaces.ExternalServices;
-using QR.Billings.Business.Interfaces.Services;
+using QR.Billings.Business.Services;
 using QR.Billings.CrossCutting.IoC;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(MyAllowSpecificOrigins, builder => builder
+     .WithOrigins("http://localhost:4200")
+     .SetIsOriginAllowed((host) => true)
+     .AllowAnyMethod()
+     .AllowAnyHeader());
+});
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -60,6 +69,8 @@ builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase);
 
 builder.Services.AddHostedService<BillingTransactionBackgroundService>();
 
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -68,6 +79,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseHttpsRedirection();
 

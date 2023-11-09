@@ -4,7 +4,7 @@ using QR.Billings.Business.Interfaces.Notifier;
 using QR.Billings.Business.Interfaces.Repositories;
 using QR.Billings.Business.Interfaces.Services;
 using QR.Billings.Business.Interfaces.Services.Base;
-using QR.Billings.Business.IO.User;
+using QR.Billings.Business.IO.Login;
 
 namespace QR.Billings.Business.Services
 {
@@ -18,7 +18,7 @@ namespace QR.Billings.Business.Services
             _tokenService = tokenService;
         }
 
-        public async Task<(User?, string)> AuthenticateAsync(UserInput input)
+        public async Task<(User?, string)> AuthenticateAsync(LoginInput input)
         {
             var user = await _userRepository.GetAsync(input.Username, input.Password);
             if(user == null)

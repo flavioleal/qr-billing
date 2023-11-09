@@ -68,9 +68,16 @@ export class BillingListComponent implements OnInit {
           this.addAlert("info", "Nenhum resultado encontrado!")
         }
       },
-      error: () => {
+      error: (ex) => {
+        console.log(ex);
+        console.log();
         this.totalRecords = 0;
         this.listBilling = [];
+        if (ex.status == 400) {
+          this.addAlert("danger", `Erro ao pesquisar: ${ex.error}`)
+        } else {
+          this.addAlert("danger", `Houve um erro interno na aplicação, por favor tente novamente mais tarde ou consulte o suporte`)
+        }
       }
     });
   }
@@ -133,8 +140,12 @@ export class BillingListComponent implements OnInit {
           this.addAlert("danger", `Erro ao cancelar: ${mensagemErro}`)
         }
       },
-      error: () => {
-
+      error: (ex) => {
+        if (ex.status == 400) {
+          this.addAlert("danger", `Erro ao cancelar: ${ex.error}`)
+        } else {
+          this.addAlert("danger", `Houve um erro interno na aplicação, por favor tente novamente mais tarde ou consulte o suporte`)
+        }
       }
     })
   }

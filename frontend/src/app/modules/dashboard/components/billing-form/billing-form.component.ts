@@ -44,8 +44,12 @@ export class BillingFormComponent implements OnInit{
           this.addAlert("danger", `Erro ao salvar: ${mensagemErro}`)
         }
       },
-      error: () => {
-        this.addAlert("danger", "Erro ao salvar!")
+      error: (ex) => {
+        if (ex.status == 400) {
+          this.addAlert("danger", `Erro ao salvar: ${ex.error}`)
+        } else {
+          this.addAlert("danger", `Houve um erro interno na aplicação, por favor tente novamente mais tarde ou consulte o suporte`)
+        }
       }
     })
   }

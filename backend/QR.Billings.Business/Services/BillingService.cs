@@ -1,5 +1,7 @@
-﻿using QR.Billings.Business.Entities;
+﻿using QR.Billings.Business.BusinessObjects;
+using QR.Billings.Business.Entities;
 using QR.Billings.Business.Enums;
+using QR.Billings.Business.Interfaces.CurrentUser;
 using QR.Billings.Business.Interfaces.ExternalServices;
 using QR.Billings.Business.Interfaces.Notifier;
 using QR.Billings.Business.Interfaces.Repositories;
@@ -7,27 +9,26 @@ using QR.Billings.Business.Interfaces.Services;
 using QR.Billings.Business.Interfaces.Services.Base;
 using QR.Billings.Business.IO.Billing;
 using QR.Billings.Business.IO.Common;
-using System.Transactions;
+using QR.Billings.Business.Utils;
 
 namespace QR.Billings.Business.Services
 {
     public class BillingService : BaseService, IBillingService
     {
-        private readonly IBillingExternalService _billingExternalService;
         private readonly IBillingRepository _billingRepository;
-        public BillingService(INotifier notifier, IBillingExternalService billingExternalService, IBillingRepository billingRepository) : base(notifier)
+        private readonly ICurrentUser _currentUser;
+        public BillingService(INotifier notifier, IBillingRepository billingRepository, ICurrentUser currentUser) : base(notifier)
         {
-            _billingExternalService = billingExternalService;
             _billingRepository = billingRepository;
+            _currentUser = currentUser;
         }
 
         public async Task<bool> AddAsync(AddBillingInput input)
         {
-            var billing = new Billing();
-            billing.Value = input.Value;
-            billing.Status = PaymentStatusEnum.Pending;
-            billing.Customer = new Customer(input.Customer.Name, input.Customer.Email);
-            billing.Merchant = new Merchant { Id = Guid.Parse("6466a9b7-3f3d-4cbb-8e8a-59a5f109d50f"), Name = "Lojista 1" };
+            if (!ExecuteValidation(new AddBillingValidation(), input)) return false;
+
+            var billing = new Billing(input.Value);
+            billing.PrepareDataForAddition(input, _currentUser);
 
             await _billingRepository.AddAsync(billing);
 
@@ -43,7 +44,7 @@ namespace QR.Billings.Business.Services
                 return false;
             }
 
-            billing.Status = PaymentStatusEnum.Canceled;
+            billing.Cancel(_currentUser.Id.Value);
 
             await _billingRepository.UpdateAsync(billing);
 
@@ -60,13 +61,30 @@ namespace QR.Billings.Business.Services
             return await _billingRepository.GetAllUnprocessedBilling();
         }
 
-        public async Task<Pagination<Billing>> GetPagedListByFilterAsync(BillingFilterInput filter)
+        public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions()
+        {
+            return await _billingRepository.GetCancelledBillingsWithUncanceledTransactions();
+        }
+
+        public async Task<Pagination<ListBillingOutput>> GetPagedListByFilterAsync(BillingFilterInput filter)
         {
             var (list, totalRecords) = await _billingRepository.GetPagedListByFilterAsync(filter);
 
-            return new Pagination<Billing>()
+            var projectedList = list.Select(x => new ListBillingOutput
             {
-                List = list,
+                Id = x.Id,
+                Value = x.Value,
+                QrCode = x.QrCode,
+                CreatedAt = x.CreatedAt,
+                Status = x.Status,
+                PaymentDescription = EnumUtils.GetDescriptionFromEnumValue(x.Status),
+                Customer = new Customer(x.Customer.Id, x.Customer.Name, x.Customer.Email)
+
+            });
+
+            return new Pagination<ListBillingOutput>()
+            {
+                List = projectedList,
                 TotalRecords = totalRecords
             };
         }

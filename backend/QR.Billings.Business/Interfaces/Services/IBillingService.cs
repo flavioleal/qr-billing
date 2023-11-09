@@ -16,6 +16,7 @@ namespace QR.Billings.Business.Interfaces.Services
         Task<bool> CancelBillingByIdAsync(Guid id);
         Task<IEnumerable<Billing>> GetAllUnprocessedBilling();
         Task UpdateAsync(Billing billing);
-        Task<Pagination<Billing>> GetPagedListByFilterAsync(BillingFilterInput filter);
+        Task<Pagination<ListBillingOutput>> GetPagedListByFilterAsync(BillingFilterInput filter);
+        Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions();
     }
 }

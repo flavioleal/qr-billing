@@ -27,10 +27,9 @@ namespace QR.Billings.Business.ExternalServices
 
         public async Task<BillingExternalCancelOutput?> Cancel(string idTransaction)
         {
-            _httpClient.BaseAddress = new Uri(_settings.Value.CancelBillingUrl);
 
             var jsonContent = CreateJsonContent(new BillingExternalCancelInput(idTransaction));
-            var response = await _httpClient.PostAsync("/", jsonContent);
+            var response = await _httpClient.PostAsync($"{_settings.Value.CancelBillingUrl}/", jsonContent);
 
             if (response.StatusCode == HttpStatusCode.BadRequest) return null;
 
@@ -41,10 +40,8 @@ namespace QR.Billings.Business.ExternalServices
 
         public async Task<BillingExternalCreateOutput?> Create(decimal value)
         {
-            _httpClient.BaseAddress = new Uri(_settings.Value.CreateBillingUrl);
-
             var jsonContent = CreateJsonContent(new BillingExternalCreateInput(value));
-            var response = await _httpClient.PostAsync("/", jsonContent);
+            var response = await _httpClient.PostAsync($"{_settings.Value.CreateBillingUrl}", jsonContent);
 
             if (response.StatusCode == HttpStatusCode.BadRequest) return null;
 
