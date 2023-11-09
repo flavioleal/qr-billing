@@ -12,7 +12,7 @@ import { ICancelBilling } from './interfaces/cancel-billing.interface';
 @Injectable({
   providedIn: 'root'
 })
-export class DashboardService {
+export class BillingService {
 
 
   url = `${environment.API}/billing`;
@@ -33,7 +33,6 @@ export class DashboardService {
   cancel(idBilling: string, input: ICancelBilling): Observable<ApiOutput<boolean>> {
     return this.http.put<ApiOutput<boolean>>(`${this.url}/cancel/${idBilling}`, input).pipe(take(1));
   }
-
 
   private buildHttpParams(filter: any): HttpParams {
     var httpParams = new HttpParams();

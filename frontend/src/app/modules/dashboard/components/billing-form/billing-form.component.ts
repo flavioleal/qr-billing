@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormGroupDirective, NgForm, Validators } from '@angular/forms';
-import { DashboardService } from '../../dashboard.service';
-import { IAddBillingInput } from '../../interfaces/add-billing.interface';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
 import { AlertComponent } from 'ngx-bootstrap/alert';
+
+import { BillingService } from '../../billing.service';
+import { IAddBillingInput } from '../../interfaces/add-billing.interface';
 
 @Component({
   selector: 'app-billing-form',
@@ -14,7 +15,7 @@ export class BillingFormComponent implements OnInit{
 
   alerts: any[] = [];
 
-  constructor(public fb: FormBuilder, private dashboardService: DashboardService) {
+  constructor(public fb: FormBuilder, private billingService: BillingService) {
     this.form = this.fb.group({
       value: ['', Validators.required],
       customerName: ['', Validators.required],
@@ -33,7 +34,7 @@ export class BillingFormComponent implements OnInit{
       customerName,
       customerEmail
     }
-    this.dashboardService.add(input).subscribe({
+    this.billingService.add(input).subscribe({
       next: (resp) => {
         if(resp?.data){
           formTemplate.resetForm();

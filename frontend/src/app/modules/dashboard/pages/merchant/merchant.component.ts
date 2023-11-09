@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { AlertComponent } from 'ngx-bootstrap/alert';
 import { PageChangedEvent } from 'ngx-bootstrap/pagination';
 import { UserService } from 'src/app/core/services/user.service';
-import { DashboardService } from '../../dashboard.service';
+
+import { BillingService } from '../../billing.service';
 import { IBillingFilter } from '../../interfaces/billing-filter.interface';
-import { ICancelBilling } from '../../interfaces/cancel-billing.interface';
 import { IListBillingOutput } from '../../interfaces/list-billing.interface';
 
 @Component({
@@ -28,7 +28,7 @@ export class MerchantComponent implements OnInit {
 
 
   constructor(public fb: FormBuilder,
-    private dashboardService: DashboardService,
+    private billingService: BillingService,
     private userService: UserService) {
     this.formResearch = this.fb.group({
       status: [''],
@@ -47,7 +47,7 @@ export class MerchantComponent implements OnInit {
       status: status,
       merchantId: merchantId
     }
-    this.dashboardService.getByFilter(filter).subscribe({
+    this.billingService.getByFilter(filter).subscribe({
       next: (resp) => {
         if (resp?.data) {
           this.totalRecords = resp.data?.totalRecords;
