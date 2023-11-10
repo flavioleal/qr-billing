@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using QR.Billings.Business.Interfaces.Notifier;
 using QR.Billings.Business.Interfaces.Services.Notifier;
@@ -6,6 +7,10 @@ using QR.Billings.Business.IO.Api;
 
 namespace QR.Billings.Api.Controllers.Base
 {
+    /// <summary>
+    /// BaseAPI Controller
+    /// </summary>
+    [Authorize]
     public abstract class BaseApiController : ControllerBase
     {
         private readonly INotifier _notifier;
