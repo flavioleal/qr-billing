@@ -1,6 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using System.Collections.Generic;
+﻿using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace QR.Billings.Api.Extensions
 {
@@ -24,6 +23,10 @@ namespace QR.Billings.Api.Extensions
                         Version = "v1",
                         Description = ""
                     });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
 
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -53,6 +56,7 @@ namespace QR.Billings.Api.Extensions
                         new List<string>()
                     }
                 });
+
             });
         }
     }

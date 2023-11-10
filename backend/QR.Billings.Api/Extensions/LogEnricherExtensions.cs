@@ -7,8 +7,16 @@ using System.Linq;
 
 namespace QR.Billings.Api.Extensions
 {
+    /// <summary>
+    /// Extension methods for enriching logs with information from HTTP requests.
+    /// </summary>
     public static class LogEnricherExtensions
     {
+        /// <summary>
+        /// Enriches the diagnostic context with information from the HTTP request.
+        /// </summary>
+        /// <param name="diagnosticContext">The diagnostic context.</param>
+        /// <param name="httpContext">The HTTP context representing the current request.</param>
         public static void EnrichFromRequest(IDiagnosticContext diagnosticContext, HttpContext httpContext)
         {
             diagnosticContext.Set("UserName", httpContext?.User?.Identity?.Name);
@@ -17,6 +25,12 @@ namespace QR.Billings.Api.Extensions
             diagnosticContext.Set("Resource", httpContext.GetMetricsCurrentResourceName());
         }
 
+        /// <summary>
+        /// Gets the name of the current resource for metrics from the HTTP context.
+        /// </summary>
+        /// <param name="httpContext">The HTTP context representing the current request.</param>
+        /// <returns>The name of the current resource for metrics.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the provided HTTP context is null.</exception>
         public static string GetMetricsCurrentResourceName(this HttpContext httpContext)
         {
             if (httpContext == null)
