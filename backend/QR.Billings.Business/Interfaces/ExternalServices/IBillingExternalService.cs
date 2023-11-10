@@ -4,7 +4,7 @@ namespace QR.Billings.Business.Interfaces.ExternalServices
 {
     public  interface IBillingExternalService
     {
-        Task<BillingExternalCreateOutput> Create(decimal value);
-        Task<BillingExternalCancelOutput> Cancel(string idTransaction);
+        Task<CreateBillingExternalOutput> Create(decimal value);
+        Task<CancelBillingExternalOutput> Cancel(string idTransaction);
     }
 }

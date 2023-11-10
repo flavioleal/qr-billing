@@ -25,29 +25,29 @@ namespace QR.Billings.Business.ExternalServices
             _settings = settings;
         }
 
-        public async Task<BillingExternalCancelOutput> Cancel(string idTransaction)
+        public async Task<CancelBillingExternalOutput> Cancel(string idTransaction)
         {
 
-            var jsonContent = CreateJsonContent(new BillingExternalCancelInput(idTransaction));
+            var jsonContent = CreateJsonContent(new CancelBillingExternalInput(idTransaction));
             var response = await _httpClient.PostAsync($"{_settings.Value.CancelBillingUrl}/", jsonContent);
 
             if (response.StatusCode == HttpStatusCode.BadRequest) return null;
 
             response.EnsureSuccessStatusCode();
 
-            return await DeserializeResponseContent<BillingExternalCancelOutput>(response);
+            return await DeserializeResponseContent<CancelBillingExternalOutput>(response);
         }
 
-        public async Task<BillingExternalCreateOutput> Create(decimal value)
+        public async Task<CreateBillingExternalOutput> Create(decimal value)
         {
-            var jsonContent = CreateJsonContent(new BillingExternalCreateInput(value));
+            var jsonContent = CreateJsonContent(new CreateBillingExternalInput(value));
             var response = await _httpClient.PostAsync($"{_settings.Value.CreateBillingUrl}", jsonContent);
 
             if (response.StatusCode == HttpStatusCode.BadRequest) return null;
 
             response.EnsureSuccessStatusCode();
 
-            return await DeserializeResponseContent<BillingExternalCreateOutput>(response);
+            return await DeserializeResponseContent<CreateBillingExternalOutput>(response);
         }
     }
 }

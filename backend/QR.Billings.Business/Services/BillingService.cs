@@ -1,8 +1,5 @@
-﻿using QR.Billings.Business.BusinessObjects;
-using QR.Billings.Business.Entities;
-using QR.Billings.Business.Enums;
+﻿using QR.Billings.Business.Entities;
 using QR.Billings.Business.Interfaces.CurrentUser;
-using QR.Billings.Business.Interfaces.ExternalServices;
 using QR.Billings.Business.Interfaces.Notifier;
 using QR.Billings.Business.Interfaces.Repositories;
 using QR.Billings.Business.Interfaces.Services;
@@ -10,7 +7,7 @@ using QR.Billings.Business.Interfaces.Services.Base;
 using QR.Billings.Business.IO.Billing;
 using QR.Billings.Business.IO.Common;
 using QR.Billings.Business.Utils;
-using static System.Net.Mime.MediaTypeNames;
+using Serilog;
 
 namespace QR.Billings.Business.Services
 {
@@ -22,54 +19,6 @@ namespace QR.Billings.Business.Services
         {
             _billingRepository = billingRepository;
             _currentUser = currentUser;
-        }
-
-        public async Task<bool> AddAsync(AddBillingInput input)
-        {
-            if (!ExecuteValidation(new AddBillingValidation(), input)) return false;
-
-            var billing = new Billing(input.Value);
-            billing.PrepareDataForAddition(input, _currentUser);
-
-            await _billingRepository.AddAsync(billing);
-
-            return true;
-        }
-
-        public async Task<bool> CancelBillingByIdAsync(Guid id)
-        {
-            var billing = await _billingRepository.GetByIdAsync(id);
-            if (billing == null)
-            {
-                Notify("Cobrança não encontrada!");
-                return false;
-            }
-            if(_currentUser.Id == null)
-            {
-                Notify("Ususário não está logado!");
-                return false;
-            }
-
-            billing.Cancel(_currentUser.Id.Value);
-
-            await _billingRepository.UpdateAsync(billing);
-
-            return true;
-        }
-
-        public async Task<IEnumerable<Billing>> GetAll()
-        {
-            return await _billingRepository.GetAll();
-        }
-
-        public async Task<IEnumerable<Billing>> GetAllUnprocessedBilling()
-        {
-            return await _billingRepository.GetAllUnprocessedBilling();
-        }
-
-        public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions()
-        {
-            return await _billingRepository.GetCancelledBillingsWithUncanceledTransactions();
         }
 
         public async Task<Pagination<ListBillingOutput>> GetPagedListByFilterAsync(BillingFilterInput filter)
@@ -100,9 +49,73 @@ namespace QR.Billings.Business.Services
             };
         }
 
+        public async Task<bool> AddAsync(AddBillingInput input)
+        {
+            if (!ExecuteValidation(new AddBillingValidation(), input)) return false;
+
+            var billing = new Billing(input.Value);
+            billing.PrepareDataForAddition(input, _currentUser);
+
+            var addBillingLog = new AddBillingLogOutput(billing.Id, billing.Value, billing.Merchant.Id, billing.Merchant.Name);
+            try
+            {
+                await _billingRepository.AddAsync(billing);
+
+                Log.Information($"[Add billing] - Success {{@addBillingLog}}", addBillingLog);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Add billing] - Error {{@addBillingLog}}", addBillingLog, ex);
+                throw;
+            }
+        }
+
+        public async Task<bool> CancelBillingByIdAsync(Guid id)
+        {
+            var billing = await _billingRepository.GetByIdAsync(id);
+            if (billing == null)
+            {
+                Notify("Cobrança não encontrada!");
+                return false;
+            }
+            if (_currentUser.Id == null)
+            {
+                Notify("Ususário não está logado!");
+                return false;
+            }
+
+            billing.Cancel(_currentUser.Id.Value);
+
+            var cancelBillingLog = new CancelBillingLogOutput(billing.Id, billing.Value, _currentUser.Id, _currentUser.Name);
+
+            try
+            {
+                await UpdateAsync(billing);
+
+                Log.Information($"[Cancel billing] - Success {{@cancelBillingLog}}", cancelBillingLog);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Cancel billing] - Error {{@cancelBillingLog}}", cancelBillingLog, ex);
+                throw;
+            }
+        }
+
         public async Task UpdateAsync(Billing billing)
         {
             await _billingRepository.UpdateAsync(billing);
+        }
+
+        public async Task<IEnumerable<Billing>> GetAllUnprocessedBilling(CancellationToken cancellationToken)
+        {
+            return await _billingRepository.GetAllUnprocessedBilling(cancellationToken);
+        }
+
+        public async Task<IEnumerable<Billing>> GetCancelledBillingsWithUncanceledTransactions(CancellationToken cancellationToken)
+        {
+            return await _billingRepository.GetCancelledBillingsWithUncanceledTransactions(cancellationToken);
         }
     }
 }

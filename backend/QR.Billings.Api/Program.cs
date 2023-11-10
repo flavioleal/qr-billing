@@ -11,7 +11,7 @@ using QR.Billings.Api.Middleware;
 using QR.Billings.Business.Configuration;
 using QR.Billings.Business.ExternalServices;
 using QR.Billings.Business.Interfaces.ExternalServices;
-using QR.Billings.Business.Services;
+using QR.Billings.Business.Services.Worker;
 using QR.Billings.CrossCutting.IoC;
 using Serilog;
 using System;
