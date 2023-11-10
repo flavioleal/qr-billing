@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace QR.Billings.Business.IO.BillingExternal
+﻿namespace QR.Billings.Business.IO.BillingExternal
 {
-    public class BillingExternalCreateOutput
+    public class CreateBillingExternalOutput
     {
         public string Message { get; set; }
         public string Id { get; set; }

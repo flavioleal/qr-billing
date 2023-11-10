@@ -36,7 +36,7 @@ namespace QR.Billings.Business.Services.Worker
 
         private async Task CheckAndGenerateUnprocessedBillings(CancellationToken cancellationToken, IBillingService billingService, IBillingExternalService billingExternalService)
         {
-            var billingCreateExternalServiceLog = new BillingExternalServiceCreateLogOutput();
+            var billingCreateExternalServiceLog = new CreateBillingExternalServiceLogOutput();
             try
             {
                 var unprocessedBilling = await billingService.GetAllUnprocessedBilling(cancellationToken);
@@ -69,7 +69,7 @@ namespace QR.Billings.Business.Services.Worker
 
         private async Task CheckAndCancelBillingsWithUncanceledTransactions(CancellationToken cancellationToken, IBillingService billingService, IBillingExternalService billingExternalService)
         {
-            var billingCancelExternalServiceLog = new BillingExternalServiceCancelLogOutput();
+            var billingCancelExternalServiceLog = new CancelBillingExternalServiceLogOutput();
             try
             {
                 var canceleds = await billingService.GetCancelledBillingsWithUncanceledTransactions(cancellationToken);
