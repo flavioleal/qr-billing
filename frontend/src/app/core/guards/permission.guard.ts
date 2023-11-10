@@ -8,7 +8,6 @@ export const permissaoGuard = (activatedRouteSnapshot: ActivatedRouteSnapshot) =
   return validateGuardToken();
 
   function validateGuardToken() {
-    debugger;
     var role = activatedRouteSnapshot.data['role']
     if (role) {
       const user = tokenService.decryptToken();

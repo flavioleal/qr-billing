@@ -1,4 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Ubuntu:300,400,500&display=swap');
+* {
+  //  font-family: 'Roboto', sans-serif;
+  font-family: 'Ubuntu', sans-serif;
+}
+
+
 .bd-placeholder-img {
   font-size: 1.125rem;
   text-anchor: middle;
